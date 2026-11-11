@@ -159,6 +159,9 @@ const SECCIONES=[
  {titulo:"Información del cliente",campos:[
   {id:"nombres",g:"Nombre completo",sub:"Nombre(s)",half:1,req:1,autoComplete:"given-name"},
   {id:"apellidos",g:"Nombre completo",sub:"Apellidos",half:1,req:1,autoComplete:"family-name"},
+  {id:"alienNum",label:"Número Alien",req:1,ph:"Ej. 123456789",sub:"Si no tiene, escriba N/A",autoComplete:"off"},
+  {id:"fechaNac",label:"Fecha de nacimiento",type:"date",req:1},
+  {id:"paisNac",label:"País donde nació",req:1,list:"paises"},
   {id:"fechaEntrada",label:"Fecha en la que ingresó a Estados Unidos",type:"date",sub:"Si no recuerda el día exacto, ponga la fecha aproximada"},
   {id:"otrosNombresUso",label:"¿Ha usado otros nombres o apellidos en el pasado?",type:"radio",opts:[SI,NO],req:1},
   {id:"otrosNombres",label:"Escriba todos los otros nombres y apellidos que ha usado",type:"textarea",req:usoOtros,show:usoOtros,sub:"Incluya nombres de soltera, apellidos diferentes o nombres con otra ortografía"},
