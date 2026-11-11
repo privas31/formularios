@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="robots" content="noindex, nofollow"/>
+  <title>F.O.I.A — Formulario</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+    const app = initializeApp({
+      apiKey: "AIzaSyCJRqzvnfcFPYoDC-eTDSEZtMcj_7mJPtM",
+      authDomain: "immigration-monitor.firebaseapp.com",
+      projectId: "immigration-monitor",
+      storageBucket: "immigration-monitor.firebasestorage.app",
+      messagingSenderId: "696902129948",
+      appId: "1:696902129948:web:95fa87711cf0880862c2d9"
+    });
+    const db = getFirestore(app);
+    window._enviarAsilo = (data) => addDoc(collection(db, "borradores"), data);
+  </script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--azul:#1E3A6E;--azul2:#2563EB;--borde:#CBD5E1;--texto:#0F172A;--suave:#64748B;--rojo:#DC2626}
+    html{-webkit-text-size-adjust:100%}
+    body{font-family:'Segoe UI',Inter,system-ui,-apple-system,sans-serif;background:#EEF2F7;color:var(--texto);min-height:100vh}
+    .wrap{max-width:640px;margin:0 auto;padding:0 0 110px}
+    .top{background:linear-gradient(135deg,#0F172A 0%,#1E3A6E 100%);color:#fff;padding:22px 18px 18px}
+    .top h1{font-size:22px;font-weight:800;letter-spacing:.3px}
+    .top p{font-size:13px;opacity:.8;margin-top:6px;line-height:1.4}
+    .prog{margin-top:14px;background:rgba(255,255,255,.18);border-radius:99px;height:8px;overflow:hidden}
+    .prog>div{height:100%;background:#4ADE80;border-radius:99px;transition:width .3s}
+    .progtxt{display:flex;justify-content:space-between;font-size:12px;margin-top:6px;opacity:.85}
+    .card{background:#fff;margin:14px 12px;border-radius:14px;padding:18px 16px;box-shadow:0 1px 3px rgba(15,23,42,.08)}
+    .sec-t{font-size:18px;font-weight:800;color:var(--azul);text-transform:uppercase;letter-spacing:.3px}
+    .sec-d{font-size:13px;color:var(--suave);margin-top:4px;line-height:1.4}
+    .sep{border:none;border-top:1px solid #E2E8F0;margin:14px 0 4px}
+    .q{margin-top:18px}
+    .lbl{display:block;font-size:15px;font-weight:600;margin-bottom:7px;line-height:1.35}
+    .req{color:var(--rojo);margin-left:3px}
+    .sub{display:block;font-size:12px;color:var(--suave);margin-top:4px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .row .q{margin-top:0}
+    .grp>.q{margin-top:10px}
+    input[type=text],input[type=tel],input[type=email],input[type=date],textarea{width:100%;padding:12px 12px;border:1px solid var(--borde);border-radius:10px;font-size:16px;font-family:inherit;background:#fff;color:var(--texto);outline:none;-webkit-appearance:none;appearance:none;min-height:46px}
+    input[type=date]{display:block}
+    select{width:100%;padding:12px 36px 12px 12px;border:1px solid var(--borde);border-radius:10px;font-size:16px;font-family:inherit;background:#fff url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%278%27%3E%3Cpath d=%27M1 1l5 5 5-5%27 stroke=%27%2364748B%27 stroke-width=%272%27 fill=%27none%27/%3E%3C/svg%3E") no-repeat right 12px center;color:var(--texto);outline:none;-webkit-appearance:none;appearance:none;min-height:46px}
+    select:focus{border-color:var(--azul2);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+    .err select{border-color:var(--rojo)!important}
+    textarea{min-height:110px;resize:vertical;line-height:1.45}
+    input:focus,textarea:focus{border-color:var(--azul2);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+    .err input,.err textarea,.err .opts,.err .firma-box{border-color:var(--rojo)!important}
+    .errmsg{color:var(--rojo);font-size:12px;margin-top:5px;font-weight:600}
+    .opts{display:flex;flex-wrap:wrap;gap:8px;border:1px solid transparent;border-radius:10px}
+    .opt{flex:1 1 calc(50% - 8px);min-width:120px;padding:12px;border:1px solid var(--borde);border-radius:10px;background:#fff;font-size:15px;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px;font-family:inherit;color:var(--texto)}
+    .opt .dot{width:18px;height:18px;border-radius:50%;border:2px solid #94A3B8;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+    .opt.on{border-color:var(--azul2);background:#EFF6FF;font-weight:600}
+    .opt.on .dot{border-color:var(--azul2)}
+    .opt.on .dot::after{content:"";width:9px;height:9px;border-radius:50%;background:var(--azul2)}
+    .h3{font-size:15px;font-weight:800;color:#334155;margin-top:24px;padding-bottom:6px;border-bottom:2px solid #E2E8F0}
+    .nota{margin-top:20px;font-size:14px;font-weight:700;color:#334155;background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:12px;line-height:1.45}
+    .hint{margin-top:8px;font-size:12px;color:var(--suave);font-style:italic}
+    .foto-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:10px;background:#475569;color:#fff;font-weight:700;font-size:15px;cursor:pointer;border:none;font-family:inherit}
+    .foto-prev{margin-top:10px;max-width:180px;border-radius:10px;border:1px solid var(--borde);display:block}
+    .firma-box{border:1px solid var(--borde);border-radius:10px;background:#fff;position:relative;overflow:hidden}
+    .firma-box canvas{display:block;width:100%;height:170px;touch-action:none}
+    .firma-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:14px;pointer-events:none}
+    .linkbtn{background:none;border:none;color:var(--azul2);font-size:13px;font-weight:600;cursor:pointer;padding:6px 0;font-family:inherit}
+    .bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #E2E8F0;padding:12px 12px calc(12px + env(safe-area-inset-bottom));display:flex;gap:10px;justify-content:center;z-index:10}
+    .bar .in{max-width:616px;width:100%;display:flex;gap:10px}
+    .btn{flex:1;padding:14px;border-radius:12px;font-size:16px;font-weight:700;border:none;cursor:pointer;font-family:inherit}
+    .btn.sec{background:#E2E8F0;color:#334155;flex:0 0 34%}
+    .btn.pri{background:var(--azul2);color:#fff}
+    .btn.ok{background:#16A34A;color:#fff}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .alerta{margin:14px 12px 0;background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;border-radius:10px;padding:12px;font-size:14px;font-weight:600}
+    .done{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#0F172A 0%,#1E3A6E 100%)}
+    .done .card{text-align:center;max-width:460px;padding:32px 22px}
+    @media (max-width:380px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<datalist id="paises"></datalist>
+<script type="text/babel">
+const {useState,useEffect,useRef}=React;
+
+const PAISES=["Afganistán","Albania","Alemania","Angola","Argentina","Armenia","Bangladés","Belice","Bolivia","Brasil","Burkina Faso","Camerún","Chad","Chile","China","Colombia","Congo","Costa Rica","Cuba","Ecuador","Egipto","El Salvador","Eritrea","España","Estados Unidos","Etiopía","Filipinas","Georgia","Ghana","Guatemala","Guinea","Haití","Honduras","India","Irán","Irak","Jamaica","Kazajistán","Kirguistán","Líbano","Mali","Marruecos","Mauritania","México","Nepal","Nicaragua","Nigeria","Pakistán","Panamá","Paraguay","Perú","Rep. Dominicana","Rumania","Rusia","Senegal","Sierra Leona","Siria","Somalia","Sudán","Tayikistán","Turquía","Ucrania","Uganda","Uruguay","Uzbekistán","Venezuela","Vietnam","Yemen"];
+document.getElementById("paises").innerHTML=PAISES.map(p=>`<option value="${p}"></option>`).join("");
+
+const FRONTERA={
+  "California":["San Ysidro","Otay Mesa","Tecate","Calexico","Andrade"],
+  "Arizona":["San Luis","Yuma","Lukeville","Sasabe","Nogales","Naco","Douglas"],
+  "Nuevo México":["Columbus","Santa Teresa","Sunland Park","Antelope Wells"],
+  "Texas":["El Paso","Tornillo","Fabens","Presidio","Del Rio","Eagle Pass","Laredo","Roma","Rio Grande City","Hidalgo","McAllen","Pharr","Progreso","Donna","Los Indios","Brownsville"],
+};
+const ESTADO_DE={};Object.entries(FRONTERA).forEach(([e,cs])=>cs.forEach(c=>{ESTADO_DE[c]=e;}));
+const OTRA_FRONTERA="Otra ciudad o aeropuerto";
+const SI="Sí",NO="No";
+const esNA=v=>/^\s*n\s*\/?\s*a\s*$/i.test(v||"");
+const tieneHijos=d=>d.tieneHijos===SI;
+const casado=d=>d.estadoCivil==="Casado (a)";
+const tieneHermanos=d=>d.tieneHermanos===SI;
+
+// ── Bloques que se repiten ─────────────────────────────────────────────────
+const hijo=i=>{const s=tieneHijos,p=`Hijo ${i}`;return[
+  {type:"h3",label:`Información Hijo ${i}`,show:s},
+  {id:`h${i}Nombres`,pre:p,g:"Nombre completo",sub:"Nombre(s)",half:1,show:s},
+  {id:`h${i}Apellidos`,pre:p,g:"Nombre completo",sub:"Apellidos",half:1,show:s},
+  {id:`h${i}FechaNac`,pre:p,label:"Fecha de nacimiento",type:"date",show:s},
+  {id:`h${i}NacPais`,pre:p,g:"Dónde nació",sub:"País",half:1,list:"paises",show:s},
+  {id:`h${i}NacCiudad`,pre:p,g:"Dónde nació",sub:"Ciudad",half:1,show:s},
+  {id:`h${i}VivePais`,pre:p,g:"Dónde vive actualmente",sub:"País",half:1,list:"paises",show:s},
+  {id:`h${i}ViveCiudad`,pre:p,g:"Dónde vive actualmente",sub:"Ciudad",half:1,show:s},
+  {id:`h${i}Alien`,pre:p,label:"Número Alien (si aplica)",show:s},
+  {id:`h${i}SSN`,pre:p,label:"Número de Social Security (si aplica)",show:s,inputMode:"numeric"},
+  {id:`h${i}Pasaporte`,pre:p,label:"Número de pasaporte",show:s},
+  {id:`h${i}Incluido`,pre:p,label:"¿Va a ser incluido en su aplicación?",type:"radio",opts:[SI,NO],show:s},
+];};
+const hermano=i=>{const s=tieneHermanos,p=`Hermano(a) ${i}`;return[
+  {type:"h3",label:`Hermano (a) ${i}`,show:s},
+  {id:`he${i}Nombres`,pre:p,g:"Nombre completo de su hermano (a)",sub:"Nombre(s)",half:1,show:s},
+  {id:`he${i}Apellidos`,pre:p,g:"Nombre completo de su hermano (a)",sub:"Apellidos",half:1,show:s},
+  {id:`he${i}NacPais`,pre:p,g:"Dónde nació su hermano (a)",sub:"País",half:1,list:"paises",show:s},
+  {id:`he${i}NacCiudad`,pre:p,g:"Dónde nació su hermano (a)",sub:"Ciudad",half:1,show:s},
+  {id:`he${i}VivePais`,pre:p,g:"Dónde vive actualmente su hermano (a)",sub:"País",half:1,list:"paises",show:s},
+  {id:`he${i}ViveCiudad`,pre:p,g:"Dónde vive actualmente su hermano (a)",sub:"Ciudad",half:1,show:s},
+];};
+const empleo=i=>{const p=`Empleo ${i}`,r=i===1,noNA=d=>!esNA(d.emp1Empresa);return[
+  {type:"h3",label:`Empleo ${i}`},
+  {id:`emp${i}Empresa`,pre:p,label:"Nombre de la empresa",req:r,sub:r?"Si no ha trabajado en los últimos 5 años, escriba N/A":""},
+  {id:`emp${i}Cargo`,pre:p,label:"Cargo",req:r?noNA:false,show:r?noNA:undefined},
+  {id:`emp${i}Inicio`,pre:p,label:"Fecha que inició ese empleo",type:"date",req:r?noNA:false,show:r?noNA:undefined},
+  {id:`emp${i}Fin`,pre:p,label:"Fecha que terminó",type:"date",req:r?noNA:false,show:r?noNA:undefined,sub:"Si todavía trabaja ahí, déjelo en blanco y escriba 'Actual' en el cargo"},
+];};
+
+// ── Descripción física ─────────────────────────────────────────────────────
+const OJOS=["Negro (Black)","Azul (Blue)","Café (Brown)","Gris (Gray)","Verde (Green)","Avellana (Hazel)","Marrón rojizo (Maroon)","Rosado (Pink)","Otro / No sé (Unknown/Other)"];
+const CABELLO=["Negro (Black)","Café (Brown)","Rubio (Blond)","Rojo (Red)","Castaño claro (Sandy)","Gris / Canoso (Gray)","Blanco (White)","Calvo (Bald)","Otro / No sé (Unknown/Other)"];
+const enPies=d=>d.estaturaUnidad==="Pies y pulgadas";
+const enCm=d=>d.estaturaUnidad==="Centímetros";
+const num=v=>{const n=parseFloat(String(v||"").replace(",","."));return isFinite(n)?n:null;};
+function calculados(d){
+  const out=[];
+  const p=num(d.peso);
+  if(p!=null){out.push(d.pesoUnidad==="Kilogramos"?{l:"Peso en libras (calculado)",v:`${Math.round(p*2.20462)} lb`}:{l:"Peso en kilogramos (calculado)",v:`${Math.round(p/2.20462)} kg`});}
+  if(enCm(d)&&num(d.estaturaCm)!=null){const tot=num(d.estaturaCm)/2.54;let ft=Math.floor(tot/12),inch=Math.round(tot-ft*12);if(inch===12){ft++;inch=0;}out.push({l:"Estatura en pies y pulgadas (calculado)",v:`${ft} pies ${inch} pulgadas`});}
+  if(enPies(d)&&num(d.estaturaPies)!=null){const cm=Math.round((num(d.estaturaPies)*12+(num(d.estaturaPulgadas)||0))*2.54);out.push({l:"Estatura en centímetros (calculado)",v:`${cm} cm`});}
+  return out;
+}
+
+// ── Secciones del formulario ──────────────────────────────────────────────
+const usoOtros=d=>d.otrosNombresUso===SI;
+const entroOtro=d=>usoOtros(d)&&d.entroOtroNombre===SI;
+const SECCIONES=[
+ {titulo:"Información del cliente",campos:[
+  {id:"nombres",g:"Nombre completo",sub:"Nombre(s)",half:1,req:1,autoComplete:"given-name"},
+  {id:"apellidos",g:"Nombre completo",sub:"Apellidos",half:1,req:1,autoComplete:"family-name"},
+  {id:"fechaEntrada",label:"Fecha en la que ingresó a Estados Unidos",type:"date",sub:"Si no recuerda el día exacto, ponga la fecha aproximada"},
+  {id:"otrosNombresUso",label:"¿Ha usado otros nombres o apellidos en el pasado?",type:"radio",opts:[SI,NO],req:1},
+  {id:"otrosNombres",label:"Escriba todos los otros nombres y apellidos que ha usado",type:"textarea",req:usoOtros,show:usoOtros,sub:"Incluya nombres de soltera, apellidos diferentes o nombres con otra ortografía"},
+  {id:"entroOtroNombre",label:"¿Entró usted a Estados Unidos utilizando otro nombre o apellidos?",type:"radio",opts:[SI,NO],req:usoOtros,show:usoOtros},
+  {id:"nombreEntrada",label:"¿Con qué nombre y apellidos entró?",req:entroOtro,show:entroOtro},
+ ]},
+ {titulo:"Información de su familia",campos:[
+  {id:"padreNombres",pre:"Padre",g:"Nombre completo de su padre",sub:"Nombre(s)",half:1},
+  {id:"padreApellidos",pre:"Padre",g:"Nombre completo de su padre",sub:"Apellidos",half:1},
+  {id:"madreNombres",pre:"Madre",g:"Nombre completo de su mamá",sub:"Nombre(s)",half:1},
+  {id:"madreApellidos",pre:"Madre",g:"Nombre completo de su mamá",sub:"Apellidos",half:1},
+  {id:"casado",label:"Es usted casado (a)",type:"radio",opts:[SI,NO]},
+  {id:"esposoNombres",pre:"Esposo(a)",g:"Nombre completo de su esposo (a)",sub:"Nombre(s)",half:1,show:d=>d.casado===SI},
+  {id:"esposoApellidos",pre:"Esposo(a)",g:"Nombre completo de su esposo (a)",sub:"Apellidos",half:1,show:d=>d.casado===SI},
+ ]},
+ {titulo:"Dirección y teléfono",campos:[
+  {id:"dirCalle",g:"Dirección actual",sub:"Calle",req:1,autoComplete:"address-line1"},
+  {id:"dirApt",g:"Dirección actual",sub:"Número de apartamento (si aplica)",autoComplete:"address-line2"},
+  {id:"dirCiudad",g:"Dirección actual",sub:"Ciudad",half:1,req:1,autoComplete:"address-level2"},
+  {id:"dirEstado",g:"Dirección actual",sub:"Estado / Provincia",half:1,req:1,autoComplete:"address-level1"},
+  {id:"dirZip",g:"Dirección actual",sub:"Código postal",req:1,inputMode:"numeric",autoComplete:"postal-code"},
+  {id:"telefono",label:"Número de teléfono",type:"tel",req:1,sub:"Número de celular"},
+ ]},
+ {titulo:"Hijos y hermanos",campos:[
+  {id:"tieneHijos",label:"Tiene hijo (s)",type:"radio",opts:[SI,NO]},
+  {id:"nombresHijos",label:"Nombres completos de su hijo (os)",type:"textarea",show:d=>d.tieneHijos===SI},
+  {id:"tieneHermanos",label:"Tiene hermanos (as)",type:"radio",opts:[SI,NO]},
+  {id:"nombresHermanos",label:"Nombres completos de sus hermanos (as)",type:"textarea",show:d=>d.tieneHermanos===SI},
+ ]},
+ {titulo:"Firma",campos:[
+  {id:"firma",label:"Firma",type:"firma",req:1},
+ ]},
+];
+
+const STORAGE_KEY="foia_borrador_v1";
+const visible=(c,d)=>!c.show||c.show(d);
+const requerido=(c,d)=>typeof c.req==="function"?c.req(d):!!c.req;
+const fmtFecha=v=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v||"");return m?`${m[2]}-${m[3]}-${m[1]}`:v;};
+const fmtTel=v=>{const n=(v||"").replace(/\D/g,"").slice(0,10);if(n.length<4)return n;if(n.length<7)return`(${n.slice(0,3)}) ${n.slice(3)}`;return`(${n.slice(0,3)}) ${n.slice(3,6)}-${n.slice(6)}`;};
+const etiqueta=c=>(c.pre?c.pre+" — ":"")+(c.g?`${c.g} — ${c.subr||c.sub}`:c.label);
+const vacio=v=>v==null||(typeof v==="string"&&v.trim()==="");
+
+function comprimirFoto(file){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onerror=()=>rej(new Error("No se pudo leer la foto"));
+    r.onload=()=>{const img=new Image();img.onerror=()=>rej(new Error("Formato de foto no válido"));img.onload=()=>{
+      const max=900,k=Math.min(1,max/Math.max(img.width,img.height));
+      const c=document.createElement("canvas");c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+      const ctx=c.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(img,0,0,c.width,c.height);
+      res(c.toDataURL("image/jpeg",0.72));
+    };img.src=r.result;};
+    r.readAsDataURL(file);
+  });
+}
+
+function Firma({value,onChange}){
+  const ref=useRef(null),dib=useRef(false),ult=useRef(null),trazos=useRef(0);
+  useEffect(()=>{
+    const cv=ref.current,ratio=window.devicePixelRatio||1,w=cv.offsetWidth,h=cv.offsetHeight;
+    cv.width=w*ratio;cv.height=h*ratio;const ctx=cv.getContext("2d");ctx.scale(ratio,ratio);
+    ctx.lineWidth=2.4;ctx.lineCap="round";ctx.lineJoin="round";ctx.strokeStyle="#0F172A";
+    if(value){const img=new Image();img.onload=()=>ctx.drawImage(img,0,0,w,h);img.src=value;}
+  },[]);
+  const pos=e=>{const r=ref.current.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};};
+  const down=e=>{e.preventDefault();ref.current.setPointerCapture?.(e.pointerId);dib.current=true;ult.current=pos(e);};
+  const move=e=>{if(!dib.current)return;e.preventDefault();const p=pos(e),ctx=ref.current.getContext("2d");ctx.beginPath();ctx.moveTo(ult.current.x,ult.current.y);ctx.lineTo(p.x,p.y);ctx.stroke();ult.current=p;trazos.current++;};
+  const up=()=>{if(!dib.current)return;dib.current=false;if(trazos.current>3)onChange(ref.current.toDataURL("image/png"));};
+  const borrar=()=>{const cv=ref.current;cv.getContext("2d").clearRect(0,0,cv.width,cv.height);trazos.current=0;onChange("");};
+  return(<div>
+    <div className="firma-box">
+      <canvas ref={ref} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onPointerLeave={up}/>
+      {!value&&<div className="firma-ph">✍️ Firme aquí con su dedo</div>}
+    </div>
+    <button type="button" className="linkbtn" onClick={borrar}>Borrar firma</button>
+  </div>);
+}
+
+function Campo({c,d,set,error}){
+  const v=d[c.id]||"";
+  let ctrl;
+  if(c.type==="radio"){
+    ctrl=<div className="opts">{c.opts.map(o=>(
+      <button type="button" key={o} className={"opt"+(v===o?" on":"")} onClick={()=>set(c.id,o)}><span className="dot"/>{o}</button>
+    ))}</div>;
+  }else if(c.type==="frontera"){
+    ctrl=<select value={v} onChange={e=>{const x=e.target.value;set(c.id,x);if(ESTADO_DE[x])set("fronteraEstado",ESTADO_DE[x]);else if(x===OTRA_FRONTERA)set("fronteraEstado","");}}>
+      <option value="">Seleccione...</option>
+      {Object.entries(FRONTERA).map(([e,cs])=><optgroup key={e} label={e}>{cs.map(ci=><option key={ci} value={ci}>{ci}</option>)}</optgroup>)}
+      <option disabled value="__sep">──────────────</option>
+      <optgroup label="¿NO ESTÁ EN LA LISTA?">
+        <option value={OTRA_FRONTERA} style={{fontWeight:700}}>➜ {OTRA_FRONTERA.toUpperCase()}</option>
+      </optgroup>
+    </select>;
+  }else if(c.type==="select"){
+    ctrl=<select value={v} onChange={e=>set(c.id,e.target.value)}>
+      <option value="">Seleccione...</option>
+      {c.opts.map(o=><option key={o} value={o}>{o}</option>)}
+    </select>;
+  }else if(c.type==="textarea"){
+    ctrl=<textarea value={v} rows={c.rows||4} onChange={e=>set(c.id,e.target.value)}/>;
+  }else if(c.type==="foto"){
+    ctrl=<div>
+      <label className="foto-btn">📷 {v?"Cambiar foto":"Tomar o subir foto"}
+        <input type="file" accept="image/*" capture="user" style={{display:"none"}} onChange={async e=>{
+          const f=e.target.files&&e.target.files[0];if(!f)return;
+          try{set(c.id,await comprimirFoto(f));}catch(err){alert(err.message);}
+          e.target.value="";
+        }}/>
+      </label>
+      {v&&<><img className="foto-prev" src={v} alt="Foto"/><button type="button" className="linkbtn" onClick={()=>set(c.id,"")}>Quitar foto</button></>}
+    </div>;
+  }else if(c.type==="firma"){
+    ctrl=<Firma value={v} onChange={val=>set(c.id,val)}/>;
+  }else{
+    const tipo=c.type==="date"?"date":c.type==="tel"?"tel":c.type==="email"?"email":"text";
+    ctrl=<input type={tipo} value={v} list={c.list} placeholder={c.ph||(c.type==="tel"?"(000) 000-0000":"")}
+      inputMode={c.inputMode||(c.type==="tel"?"tel":undefined)} autoComplete={c.autoComplete||"on"}
+      onChange={e=>set(c.id,c.type==="tel"?fmtTel(e.target.value):e.target.value)}/>;
+  }
+  const r=requerido(c,d);
+  return(<div className={"q"+(error?" err":"")} id={"f_"+c.id}>
+    {!c.g&&<label className="lbl">{c.label}{r&&<span className="req">*</span>}</label>}
+    {ctrl}
+    {c.g?<span className="sub">{c.sub}{r&&<span className="req">*</span>}</span>:(c.sub&&<span className="sub">{c.sub}</span>)}
+    {error&&<div className="errmsg">{error}</div>}
+  </div>);
+}
+
+function Seccion({sec,d,set,errores}){
+  const items=sec.campos.filter(c=>visible(c,d));
+  const out=[];let i=0;
+  while(i<items.length){
+    const c=items[i];
+    if(c.type==="h3"){out.push(<div className="h3" key={"h"+i}>{c.label}</div>);i++;continue;}
+    if(c.type==="nota"){out.push(<div className="nota" key={"n"+i}>{c.label}</div>);i++;continue;}
+    if(c.g){
+      const grupo=[];let j=i;while(j<items.length&&items[j].g===c.g&&items[j].pre===c.pre&&items[j].id){grupo.push(items[j]);j++;}
+      const req=grupo.some(x=>requerido(x,d));
+      const filas=[];let k=0;
+      while(k<grupo.length){
+        if(grupo[k].half&&grupo[k+1]&&grupo[k+1].half){filas.push(<div className="row" key={grupo[k].id}><Campo c={grupo[k]} d={d} set={set} error={errores[grupo[k].id]}/><Campo c={grupo[k+1]} d={d} set={set} error={errores[grupo[k+1].id]}/></div>);k+=2;}
+        else{filas.push(<Campo key={grupo[k].id} c={grupo[k]} d={d} set={set} error={errores[grupo[k].id]}/>);k++;}
+      }
+      out.push(<div className="q grp" key={"g"+c.id}><label className="lbl" style={{marginBottom:0}}>{c.g}{req&&<span className="req">*</span>}</label>{filas}</div>);
+      i=j;continue;
+    }
+    if(c.half&&items[i+1]&&items[i+1].half&&!items[i+1].g&&items[i+1].id){
+      out.push(<div className="row q" key={c.id}><Campo c={c} d={d} set={set} error={errores[c.id]}/><Campo c={items[i+1]} d={d} set={set} error={errores[items[i+1].id]}/></div>);i+=2;continue;
+    }
+    out.push(<Campo key={c.id} c={c} d={d} set={set} error={errores[c.id]}/>);i++;
+  }
+  return out;
+}
+
+function validar(sec,d){
+  const e={};
+  sec.campos.forEach(c=>{
+    if(!c.id||!visible(c,d))return;
+    const v=d[c.id];
+    if(requerido(c,d)&&vacio(v)){e[c.id]=c.type==="firma"?"Por favor firme el formulario":c.type==="radio"?"Por favor seleccione una opción":"Este campo es obligatorio";return;}
+    if(!vacio(v)&&c.type==="tel"&&v.replace(/\D/g,"").length!==10)e[c.id]="Escriba un número de 10 dígitos";
+    if(!vacio(v)&&c.type==="email"&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v))e[c.id]="Correo electrónico no válido";
+  });
+  return e;
+}
+
+function armarEnvio(d){
+  const secciones=SECCIONES.map(s=>({titulo:s.titulo,campos:s.campos
+    .filter(c=>c.id&&c.type!=="foto"&&c.type!=="firma"&&visible(c,d)&&!vacio(d[c.id]))
+    .map(c=>({l:etiqueta(c),v:c.type==="date"?fmtFecha(d[c.id]):String(d[c.id]).trim()}))
+  })).map(s=>s.titulo==="Descripción física"?{...s,campos:[...s.campos,...calculados(d)]}:s).filter(s=>s.campos.length);
+  const datos={};
+  SECCIONES.forEach(s=>s.campos.forEach(c=>{if(c.id&&c.type!=="foto"&&c.type!=="firma"&&visible(c,d)&&!vacio(d[c.id]))datos[c.id]=String(d[c.id]).trim();}));
+  return{
+    tipoFormulario:"FOIA",labelFormulario:"FOIA",estado:"borrador",fuente:"foia_link",
+    fechaEnvio:new Date().toISOString(),
+    nombre:`${(d.nombres||"").trim()} ${(d.apellidos||"").trim()}`.trim(),
+    paisOrigen:(d.paisNac||"").trim(),
+    alienNum:esNA(d.alienNum)?"":(d.alienNum||"").trim(),
+    telefono:d.telefono||"",email:(d.email||"").trim(),
+    secciones,datos,foto:d.foto||"",firma:d.firma||"",
+  };
+}
+
+function App(){
+  const [d,setD]=useState(()=>{try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}")||{};}catch(e){return{};}});
+  const [paso,setPaso]=useState(()=>{try{return Math.min(+(localStorage.getItem(STORAGE_KEY+"_paso")||0),SECCIONES.length-1);}catch(e){return 0;}});
+  const [errores,setErrores]=useState({});
+  const [enviando,setEnviando]=useState(false);
+  const [enviado,setEnviado]=useState(false);
+  const [alerta,setAlerta]=useState("");
+
+  useEffect(()=>{try{const {foto,firma,...resto}=d;localStorage.setItem(STORAGE_KEY,JSON.stringify(resto));localStorage.setItem(STORAGE_KEY+"_paso",String(paso));}catch(e){}},[d,paso]);
+
+  const set=(id,v)=>{setD(p=>({...p,[id]:v}));if(errores[id])setErrores(p=>{const n={...p};delete n[id];return n;});};
+  const sec=SECCIONES[paso],ultimo=paso===SECCIONES.length-1;
+  const irArriba=()=>window.scrollTo({top:0,behavior:"smooth"});
+
+  const siguiente=async()=>{
+    const e=validar(sec,d);setErrores(e);
+    const ids=Object.keys(e);
+    if(ids.length){
+      setAlerta("Faltan "+ids.length+" respuesta(s) obligatoria(s) en esta sección. Están marcadas en rojo.");
+      const el=document.getElementById("f_"+ids[0]);if(el)el.scrollIntoView({behavior:"smooth",block:"center"});
+      return;
+    }
+    setAlerta("");
+    if(!ultimo){setPaso(paso+1);irArriba();return;}
+    for(let i=0;i<SECCIONES.length;i++){const ei=validar(SECCIONES[i],d);if(Object.keys(ei).length){setPaso(i);setErrores(ei);setAlerta(`Falta información en la sección "${SECCIONES[i].titulo}".`);irArriba();return;}}
+    if(!window._enviarAsilo){setAlerta("No hay conexión en este momento. Revise su internet e intente de nuevo.");return;}
+    setEnviando(true);
+    try{
+      await window._enviarAsilo(armarEnvio(d));
+      try{localStorage.removeItem(STORAGE_KEY);localStorage.removeItem(STORAGE_KEY+"_paso");}catch(e){}
+      setEnviado(true);irArriba();
+    }catch(err){console.error(err);setAlerta("Hubo un error al enviar. Revise su conexión a internet e intente de nuevo. Sus respuestas no se han perdido.");}
+    setEnviando(false);
+  };
+  const anterior=()=>{setErrores({});setAlerta("");setPaso(Math.max(0,paso-1));irArriba();};
+
+  if(enviado)return(
+    <div className="done"><div className="card">
+      <div style={{fontSize:52}}>✅</div>
+      <h2 style={{fontSize:22,color:"#166534",marginTop:10}}>¡Formulario enviado!</h2>
+      <p style={{fontSize:15,color:"#334155",marginTop:12,lineHeight:1.5}}>Gracias. Recibimos su información para el FOIA. Nuestra oficina la revisará y se comunicará con usted.</p>
+      <p style={{fontSize:13,color:"#64748B",marginTop:14}}>Ya puede cerrar esta página.</p>
+    </div></div>
+  );
+
+  const pct=Math.round(paso/SECCIONES.length*100);
+  return(<div className="wrap">
+    <div className="top">
+      <h1>F.O.I.A</h1>
+      <p>Información del cliente. Las preguntas con <b style={{color:"#FCA5A5"}}>*</b> son obligatorias.</p>
+      <div className="prog"><div style={{width:pct+"%"}}/></div>
+      <div className="progtxt"><span>Sección {paso+1} de {SECCIONES.length}</span><span>{pct}%</span></div>
+    </div>
+    {alerta&&<div className="alerta">{alerta}</div>}
+    <div className="card">
+      <div className="sec-t">{sec.titulo}</div>
+      {sec.desc&&<div className="sec-d">{sec.desc}</div>}
+      <hr className="sep"/>
+      <Seccion sec={sec} d={d} set={set} errores={errores}/>
+      {paso===0&&<div className="hint">Sus respuestas se guardan en este teléfono mientras llena el formulario, por si se cierra la página.</div>}
+    </div>
+    <div className="bar"><div className="in">
+      {paso>0&&<button className="btn sec" onClick={anterior} disabled={enviando}>Atrás</button>}
+      <button className={"btn "+(ultimo?"ok":"pri")} onClick={siguiente} disabled={enviando}>{enviando?"Enviando...":ultimo?"Enviar formulario":"Siguiente"}</button>
+    </div></div>
+  </div>);
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
