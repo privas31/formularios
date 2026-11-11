@@ -137,6 +137,21 @@ const empleo=i=>{const p=`Empleo ${i}`,r=i===1,noNA=d=>!esNA(d.emp1Empresa);retu
   {id:`emp${i}Fin`,pre:p,label:"Fecha que terminó",type:"date",req:r?noNA:false,show:r?noNA:undefined,sub:"Si todavía trabaja ahí, déjelo en blanco y escriba 'Actual' en el cargo"},
 ];};
 
+// ── Descripción física ─────────────────────────────────────────────────────
+const OJOS=["Negro (Black)","Azul (Blue)","Café (Brown)","Gris (Gray)","Verde (Green)","Avellana (Hazel)","Marrón rojizo (Maroon)","Rosado (Pink)","Otro / No sé (Unknown/Other)"];
+const CABELLO=["Negro (Black)","Café (Brown)","Rubio (Blond)","Rojo (Red)","Castaño claro (Sandy)","Gris / Canoso (Gray)","Blanco (White)","Calvo (Bald)","Otro / No sé (Unknown/Other)"];
+const enPies=d=>d.estaturaUnidad==="Pies y pulgadas";
+const enCm=d=>d.estaturaUnidad==="Centímetros";
+const num=v=>{const n=parseFloat(String(v||"").replace(",","."));return isFinite(n)?n:null;};
+function calculados(d){
+  const out=[];
+  const p=num(d.peso);
+  if(p!=null){out.push(d.pesoUnidad==="Kilogramos"?{l:"Peso en libras (calculado)",v:`${Math.round(p*2.20462)} lb`}:{l:"Peso en kilogramos (calculado)",v:`${Math.round(p/2.20462)} kg`});}
+  if(enCm(d)&&num(d.estaturaCm)!=null){const tot=num(d.estaturaCm)/2.54;let ft=Math.floor(tot/12),inch=Math.round(tot-ft*12);if(inch===12){ft++;inch=0;}out.push({l:"Estatura en pies y pulgadas (calculado)",v:`${ft} pies ${inch} pulgadas`});}
+  if(enPies(d)&&num(d.estaturaPies)!=null){const cm=Math.round((num(d.estaturaPies)*12+(num(d.estaturaPulgadas)||0))*2.54);out.push({l:"Estatura en centímetros (calculado)",v:`${cm} cm`});}
+  return out;
+}
+
 // ── Secciones del formulario ──────────────────────────────────────────────
 const SECCIONES=[
  {titulo:"Información personal",campos:[
@@ -162,6 +177,16 @@ const SECCIONES=[
   {id:"parole",label:"Tiene Parole",type:"radio",opts:[SI,NO],req:1},
   {id:"ultimaVezPais",label:"Fecha de última vez en su país",type:"date",req:1},
   {id:"tiempoEEUU",label:"Cuánto tiempo tiene en Estados Unidos",req:1,ph:"Ej. 2 años y 3 meses"},
+ ]},
+ {titulo:"Descripción física",campos:[
+  {id:"peso",label:"Peso",req:1,inputMode:"decimal",ph:"Ej. 150"},
+  {id:"pesoUnidad",label:"¿En qué medida escribió su peso?",type:"radio",opts:["Libras","Kilogramos"],req:1},
+  {id:"estaturaUnidad",label:"Estatura — ¿cómo la quiere escribir?",type:"radio",opts:["Pies y pulgadas","Centímetros"],req:1},
+  {id:"estaturaPies",g:"Estatura",sub:"Pies",half:1,req:enPies,show:enPies,inputMode:"numeric",ph:"Ej. 5"},
+  {id:"estaturaPulgadas",g:"Estatura",sub:"Pulgadas",half:1,req:enPies,show:enPies,inputMode:"numeric",ph:"Ej. 6"},
+  {id:"estaturaCm",label:"Estatura en centímetros",req:enCm,show:enCm,inputMode:"numeric",ph:"Ej. 168"},
+  {id:"colorOjos",label:"Color de ojos",type:"select",opts:OJOS,req:1},
+  {id:"colorCabello",label:"Color de cabello",type:"select",opts:CABELLO,req:1},
  ]},
  {titulo:"Entradas a Estados Unidos",campos:[
   {id:"fechaEntrada",label:"Fecha que entró a Estados Unidos",type:"date",req:1},
@@ -328,6 +353,11 @@ function Campo({c,d,set,error}){
         <option value={OTRA_FRONTERA} style={{fontWeight:700}}>➜ {OTRA_FRONTERA.toUpperCase()}</option>
       </optgroup>
     </select>;
+  }else if(c.type==="select"){
+    ctrl=<select value={v} onChange={e=>set(c.id,e.target.value)}>
+      <option value="">Seleccione...</option>
+      {c.opts.map(o=><option key={o} value={o}>{o}</option>)}
+    </select>;
   }else if(c.type==="textarea"){
     ctrl=<textarea value={v} rows={c.rows||4} onChange={e=>set(c.id,e.target.value)}/>;
   }else if(c.type==="foto"){
@@ -400,7 +430,7 @@ function armarEnvio(d){
   const secciones=SECCIONES.map(s=>({titulo:s.titulo,campos:s.campos
     .filter(c=>c.id&&c.type!=="foto"&&c.type!=="firma"&&visible(c,d)&&!vacio(d[c.id]))
     .map(c=>({l:etiqueta(c),v:c.type==="date"?fmtFecha(d[c.id]):String(d[c.id]).trim()}))
-  })).filter(s=>s.campos.length);
+  })).map(s=>s.titulo==="Descripción física"?{...s,campos:[...s.campos,...calculados(d)]}:s).filter(s=>s.campos.length);
   const datos={};
   SECCIONES.forEach(s=>s.campos.forEach(c=>{if(c.id&&c.type!=="foto"&&c.type!=="firma"&&visible(c,d)&&!vacio(d[c.id]))datos[c.id]=String(d[c.id]).trim();}));
   return{
